@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auftragsliste Jobcenter Bonn</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#f0f9fb', 500: '#00a5d1', 600: '#0084a7', 700: '#006a86' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .status-pill { font-size: 10px; font-weight: bold; text-transform: uppercase; border-radius: 9999px; padding: 4px 8px; border: none; cursor: pointer; }
+        .status-pill.offen { background-color: #fef3c7; color: #b45309; }
+        .status-pill.in_arbeit { background-color: #dbeafe; color: #1d4ed8; }
+        .status-pill.erledigt { background-color: #d1fae5; color: #047857; }
+        .tab-active { border-bottom: 3px solid #00a5d1; color: #00a5d1; }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
+
+    <nav class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <img src="logo.svg" alt="Logo" class="h-10 w-auto">
+                    <span class="text-xl font-bold text-brand-500 hidden sm:block uppercase tracking-tight">Jobcenter Bonn</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="saveAllToLocal(true)" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md text-sm font-bold transition-all">
+                        <span>💾</span> <span class="hidden sm:inline">Manuell Sichern</span>
+                    </button>
+                    <button onclick="toggleModal(true)" class="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 shadow-md text-sm font-bold">
+                        + <span class="hidden sm:inline">Neu</span>
+                    </button>
+                    <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 ml-2 rounded-lg bg-slate-100 dark:bg-slate-700">🌓</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div class="flex gap-6 border-b border-slate-200 dark:border-slate-700 w-full md:w-auto">
+                <button onclick="switchTab('active')" id="tab-active-btn" class="pb-2 px-1 font-bold text-sm tab-active transition-all">Aktive Aufträge</button>
+                <button onclick="switchTab('archive')" id="tab-archive-btn" class="pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all">Archiv</button>
+            </div>
+
+            <div class="relative w-full md:w-64">
+                <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Suche..." 
+                class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none shadow-sm">
+                <span class="absolute left-3 top-2.5 opacity-30">🔍</span>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 uppercase">
+                            <th class="px-6 py-4">Status / Datum</th>
+                            <th class="px-6 py-4">Liegenschaft | Raum</th>
+                            <th class="px-6 py-4">Sachverhalt</th>
+                            <th class="px-6 py-4">Veranlasser (Team)</th>
+                            <th class="px-6 py-4">Anmerkung</th>
+                            <th class="px-6 py-4 text-right" id="action-header">Archivieren</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border dark:border-slate-700 animate-in fade-in zoom-in duration-200">
+            <div class="bg-brand-500 p-6 text-white flex justify-between items-center">
+                <h3 class="font-bold uppercase tracking-widest text-sm">Auftrag erfassen</h3>
+                <button onclick="toggleModal(false)" class="text-2xl leading-none">&times;</button>
+            </div>
+            <form id="newOrderForm" class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Liegenschaft</label>
+                        <select id="f-standort" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                            <option>Rochusstr. 4</option><option>Rochusstr. 4b</option><option>Rochusstr. 4c</option>
+                            <option>Rochusstr. 4d</option><option selected>Rochusstr. 6</option><option>Rochusstr. 12</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Raum</label>
+                        <input id="f-raum" type="text" placeholder="Raum-Nr." class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Sachverhalt</label>
+                    <textarea id="f-text" rows="3" required placeholder="Was ist an Team 620 zu melden?" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none resize-none focus:ring-2 focus:ring-brand-500"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Veranlasser (Meldendes Team)</label>
+                        <input id="f-name" type="text" placeholder="z.B. Team 610" required class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Datum</label>
+                        <input id="f-datum" type="date" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-lg font-bold shadow-lg mt-4 hover:bg-brand-600 transition-all transform active:scale-95">Auftrag an 620 übermitteln</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let auftraege = JSON.parse(localStorage.getItem('jc_orders')) || [];
+        let currentTab = 'active';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('tab-active-btn').className = tab === 'active' ? 'pb-2 px-1 font-bold text-sm tab-active transition-all' : 'pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all';
+            document.getElementById('tab-archive-btn').className = tab === 'archive' ? 'pb-2 px-1 font-bold text-sm tab-active transition-all' : 'pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all';
+            document.getElementById('action-header').innerText = tab === 'active' ? 'Archivieren' : 'Wiederherstellen';
+            renderTable();
+        }
+
+        function renderTable() {
+            const body = document.getElementById('tableBody');
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            body.innerHTML = '';
+            
+            const filtered = auftraege.filter(o => {
+                const matchesTab = (currentTab === 'active' ? !o.archiv : o.archiv);
+                const matchesSearch = o.text.toLowerCase().includes(query) || 
+                                     o.standort.toLowerCase().includes(query) || 
+                                     o.name.toLowerCase().includes(query) || 
+                                     o.raum.toLowerCase().includes(query);
+                return matchesTab && matchesSearch;
+            });
+
+            filtered.forEach((o) => {
+                const realIndex = auftraege.findIndex(a => a === o);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-4">
+                        <select onchange="updateData(${realIndex}, 'status', this.value)" class="status-pill ${o.status}">
+                            <option value="offen" ${o.status==='offen'?'selected':''}>Offen</option>
+                            <option value="in_arbeit" ${o.status==='in_arbeit'?'selected':''}>In Arbeit</option>
+                            <option value="erledigt" ${o.status==='erledigt'?'selected':''}>Erledigt</option>
+                        </select>
+                        <p class="text-[10px] text-slate-400 mt-2 px-2 italic">${o.datum}</p>
+                    </td>
+                    <td class="px-4 py-4">
+                        <select onchange="updateData(${realIndex}, 'standort', this.value)" class="bg-transparent border-none text-sm font-semibold text-slate-700 dark:text-slate-200 w-full outline-none">
+                            ${['Rochusstr. 4','Rochusstr. 4b','Rochusstr. 4c','Rochusstr. 4d','Rochusstr. 6','Rochusstr. 12'].map(s => `<option ${o.standort===s?'selected':''}>${s}</option>`).join('')}
+                        </select>
+                        <input onchange="updateData(${realIndex}, 'raum', this.value)" type="text" value="${o.raum}" class="block w-full bg-transparent border-none text-xs text-slate-500 outline-none rounded mt-1 focus:bg-white dark:focus:bg-slate-700 px-1">
+                    </td>
+                    <td class="px-4 py-4">
+                        <textarea onchange="updateData(${realIndex}, 'text', this.value)" class="bg-transparent border-none text-sm text-slate-600 dark:text-slate-300 w-full resize-none outline-none focus:bg-white dark:focus:bg-slate-700 px-1" rows="2">${o.text}</textarea>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-slate-500">
+                        <input onchange="updateData(${realIndex}, 'name', this.value)" type="text" value="${o.name}" class="bg-transparent border-none w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1">
+                    </td>
+                    <td class="px-4 py-4">
+                        <input onchange="updateData(${realIndex}, 'note', this.value)" type="text" value="${o.note || ''}" placeholder="Anmerkung..." class="bg-transparent border-none text-sm italic text-brand-500 w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1">
+                    </td>
+                    <td class="px-4 py-4 text-right">
+                        ${currentTab === 'active' 
+                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="In Archiv verschieben">🗑️</button>`
+                            : `<button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500 hover:scale-125 transition-all" title="Wiederherstellen">🔄</button>`
+                        }
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function updateData(index, field, value) { 
+            auftraege[index][field] = value; 
+            // Optional: Auch hier auto-save nach jeder Feldänderung
+            saveAllToLocal(false);
+        }
+
+        function toggleArchiv(index, status) { 
+            auftraege[index].archiv = status; 
+            saveAllToLocal(false);
+            renderTable(); 
+        }
+
+        function toggleModal(s) { 
+            document.getElementById('modal').classList.toggle('hidden', !s); 
+            if(s) document.getElementById('f-datum').valueAsDate = new Date();
+        }
+
+        function saveAllToLocal(showAlert) {
+            localStorage.setItem('jc_orders', JSON.stringify(auftraege));
+            if(showAlert) alert("Daten manuell gesichert!");
+        }
+
+        document.getElementById('newOrderForm').onsubmit = function(e) {
+            e.preventDefault();
+            auftraege.unshift({
+                datum: document.getElementById('f-datum').value,
+                standort: document.getElementById('f-standort').value,
+                raum: document.getElementById('f-raum').value,
+                text: document.getElementById('f-text').value,
+                name: document.getElementById('f-name').value,
+                status: 'offen', note: '', archiv: false
+            });
+            // AUTO-SAVE beim Erstellen
+            saveAllToLocal(false); 
+            renderTable(); 
+            toggleModal(false); 
+            this.reset();
+        };
+
+        window.onload = renderTable;
+    </script>
+</body>
+</html>
