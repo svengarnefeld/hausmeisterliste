@@ -125,7 +125,6 @@
         let auftraege = [];
         let currentTab = 'active';
 
-        // DATEN AUS MONGODB LADEN
         async function loadData() {
             try {
                 const response = await fetch('/api/orders');
@@ -136,7 +135,6 @@
             } catch (e) { console.error("Laden fehlgeschlagen", e); }
         }
 
-        // DATEN IN MONGODB SPEICHERN
         async function saveAllToCloud(showAlert) {
             try {
                 const response = await fetch('/api/orders', {
@@ -152,7 +150,7 @@
             currentTab = tab;
             document.getElementById('tab-active-btn').className = tab === 'active' ? 'pb-2 px-1 font-bold text-sm tab-active transition-all' : 'pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all';
             document.getElementById('tab-archive-btn').className = tab === 'archive' ? 'pb-2 px-1 font-bold text-sm tab-active transition-all' : 'pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all';
-            document.getElementById('action-header').innerText = tab === 'active' ? 'Archivieren' : 'Wiederherstellen';
+            document.getElementById('action-header').innerText = tab === 'active' ? 'Archivieren' : 'Aktion';
             renderTable();
         }
 
@@ -197,10 +195,13 @@
                     <td class="px-4 py-4">
                         <input onchange="updateData(${realIndex}, 'note', this.value)" type="text" value="${o.note || ''}" placeholder="..." class="bg-transparent border-none text-sm italic text-brand-500 w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1">
                     </td>
-                    <td class="px-4 py-4 text-right">
+                    <td class="px-4 py-4 text-right whitespace-nowrap">
                         ${currentTab === 'active' 
-                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500 transition-colors">🗑️</button>`
-                            : `<button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500 hover:scale-110 transition-all">🔄</button>`
+                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="In Archiv verschieben">🗑️</button>`
+                            : `<div class="flex gap-2 justify-end">
+                                 <button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500 hover:scale-110 transition-all" title="Wiederherstellen">🔄</button>
+                                 <button onclick="deletePermanently(${realIndex})" class="p-2 text-red-400 hover:text-red-600 hover:scale-110 transition-all" title="Endgültig löschen">❌</button>
+                               </div>`
                         }
                     </td>
                 `;
@@ -211,13 +212,24 @@
         function updateData(index, field, value) { 
             auftraege[index][field] = value; 
             saveAllToCloud(false); 
-            if(field === 'status') renderTable(); // Farbe aktualisieren
+            if(field === 'status') renderTable();
         }
 
         function toggleArchiv(index, status) { 
             auftraege[index].archiv = status; 
             saveAllToCloud(false);
             renderTable(); 
+        }
+
+        function deletePermanently(index) {
+            const order = auftraege[index];
+            const confirmMsg = `Möchten Sie den Auftrag "${order.text.substring(0,30)}..." wirklich unwiderruflich aus der Datenbank löschen?`;
+            
+            if (confirm(confirmMsg)) {
+                auftraege.splice(index, 1);
+                saveAllToCloud(false);
+                renderTable();
+            }
         }
 
         function toggleModal(s) { 
@@ -240,15 +252,8 @@
             renderTable(); toggleModal(false); this.reset();
         };
 
-        function exportTableToExcel() {
-            const data = auftraege.filter(o => !o.archiv);
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Auftraege");
-            XLSX.writeFile(wb, "JC_Bonn_Export.xlsx");
-        }
-
         window.onload = loadData;
     </script>
 </body>
 </html>
+
