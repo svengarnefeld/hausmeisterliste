@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     
     // Deine gewünschten Empfänger
     const recipients = [
-        'Jobcenter-Bonn.Team610-Digitalisierung@jobcenter-ge.de'
+        'jobcenter-bonn.team610-digitalisierung@jobcenter-ge.de'
 
     ];
 
