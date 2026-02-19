@@ -8,10 +8,8 @@ export default async function handler(req, res) {
     
     // Deine gewünschten Empfänger
     const recipients = [
-        'zeus.petrikis@apleona.com',
-        'sascha.wallner@apleona.com',
-        'Jobcenter-Bonn.Team610-Organisation@jobcenter-ge.de',
-        'sven.garnefeld@gmail.com'
+        'Jobcenter-Bonn.Team610-Digitalisierung@jobcenter-ge.de'
+
     ];
 
     // Betreff-Logik: [Typ] Liegenschaft | Raum
