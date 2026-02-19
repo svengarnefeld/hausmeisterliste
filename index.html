@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" class="">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 50: '#f0f9fb', 500: '#00a5d1', 600: '#0084a7', 700: '#006a86' }
-                    }
-                }
-            }
+            theme: { extend: { colors: { brand: { 50: '#f0f9fb', 500: '#00a5d1', 600: '#0084a7', 700: '#006a86' } } } }
         }
     </script>
     <style>
@@ -36,14 +30,9 @@
                     <img src="logo.svg" alt="Logo" class="h-10 w-auto">
                     <span class="text-xl font-bold text-brand-500 hidden sm:block uppercase tracking-tight">Jobcenter Bonn</span>
                 </div>
-                
                 <div class="flex items-center gap-2">
-                    <button onclick="saveAllToCloud(true)" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md text-sm font-bold transition-all">
-                        <span>💾</span> <span class="hidden sm:inline">Cloud Sync</span>
-                    </button>
-                    <button onclick="toggleModal(true)" class="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 shadow-md text-sm font-bold">
-                        + <span class="hidden sm:inline">Neu</span>
-                    </button>
+                    <button onclick="saveAllToCloud(true)" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md text-sm font-bold transition-all">💾 Cloud Sync</button>
+                    <button onclick="toggleModal(true)" class="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 shadow-md text-sm font-bold">+ Neu</button>
                     <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 ml-2 rounded-lg bg-slate-100 dark:bg-slate-700">🌓</button>
                 </div>
             </div>
@@ -51,17 +40,14 @@
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div class="flex gap-6 border-b border-slate-200 dark:border-slate-700 w-full md:w-auto">
-                <button onclick="switchTab('active')" id="tab-active-btn" class="pb-2 px-1 font-bold text-sm tab-active transition-all">Aktive Aufträge</button>
-                <button onclick="switchTab('archive')" id="tab-archive-btn" class="pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all">Archiv</button>
+                <button onclick="switchTab('active')" id="tab-active-btn" class="pb-2 px-1 font-bold text-sm tab-active">Aktive Aufträge</button>
+                <button onclick="switchTab('archive')" id="tab-archive-btn" class="pb-2 px-1 font-bold text-sm text-slate-400">Archiv</button>
             </div>
-
             <div class="relative w-full md:w-64">
-                <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Suche..." 
-                class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none shadow-sm">
-                <span class="absolute left-3 top-2.5 opacity-30 text-slate-500">🔍</span>
+                <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Suche..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                <span class="absolute left-3 top-2.5 opacity-30">🔍</span>
             </div>
         </div>
 
@@ -69,7 +55,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                             <th class="px-6 py-4">Status / Datum</th>
                             <th class="px-6 py-4">Liegenschaft | Raum</th>
                             <th class="px-6 py-4">Sachverhalt</th>
@@ -78,52 +64,33 @@
                             <th class="px-6 py-4 text-right" id="action-header">Archivieren</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700">
-                        </tbody>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
                 </table>
             </div>
         </div>
     </main>
 
     <div id="modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border dark:border-slate-700 animate-in fade-in zoom-in duration-200">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border">
             <div class="bg-brand-500 p-6 text-white flex justify-between items-center">
-                <h3 class="font-bold uppercase tracking-widest text-sm">Neuer Reparaturauftrag</h3>
-                <button onclick="toggleModal(false)" class="text-2xl leading-none hover:scale-110 transition-transform">&times;</button>
+                <h3 class="font-bold uppercase tracking-widest text-sm">Neuer Auftrag</h3>
+                <button onclick="toggleModal(false)" class="text-2xl">&times;</button>
             </div>
             <form id="newOrderForm" class="p-6 space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Liegenschaft</label>
-                        <select id="f-standort" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                            <option>Rochusstr. 4</option><option>Rochusstr. 4b</option><option>Rochusstr. 4c</option>
-                            <option>Rochusstr. 4d</option><option selected>Rochusstr. 6</option><option>Rochusstr. 12</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Raum</label>
-                        <input id="f-raum" type="text" placeholder="Raum-Nr." class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
+                    <select id="f-standort" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
+                        <option>Rochusstr. 4</option><option>Rochusstr. 4b</option><option>Rochusstr. 4c</option>
+                        <option>Rochusstr. 4d</option><option selected>Rochusstr. 6</option><option>Rochusstr. 12</option>
+                    </select>
+                    <input id="f-raum" type="text" placeholder="Raum-Nr." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Sachverhalt</label>
-                    <textarea id="f-text" rows="2" required placeholder="Was ist defekt?" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none resize-none focus:ring-2 focus:ring-brand-500"></textarea>
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Anmerkung (Optional)</label>
-                    <input id="f-note" type="text" placeholder="Zusatzinfos..." class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                </div>
+                <textarea id="f-text" rows="2" required placeholder="Sachverhalt..." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none resize-none"></textarea>
+                <input id="f-note" type="text" placeholder="Anmerkung..." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Veranlasser (Meldendes Team)</label>
-                        <input id="f-name" type="text" required placeholder="z.B. Team 611" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase">Datum</label>
-                        <input id="f-datum" type="date" class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
-                    </div>
+                    <input id="f-name" type="text" required placeholder="Veranlasser Team" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
+                    <input id="f-datum" type="date" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
                 </div>
-                <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-lg font-bold shadow-lg mt-4 hover:bg-brand-600 transition-all transform active:scale-95">Auftrag speichern & Cloud-Sync</button>
+                <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-lg font-bold shadow-lg mt-4">Auftrag speichern</button>
             </form>
         </div>
     </div>
@@ -135,11 +102,8 @@
         async function loadData() {
             try {
                 const response = await fetch('/api/orders');
-                if (response.ok) {
-                    auftraege = await response.json();
-                    renderTable();
-                }
-            } catch (e) { console.error("Laden fehlgeschlagen", e); }
+                if (response.ok) { auftraege = await response.json(); renderTable(); }
+            } catch (e) { console.error(e); }
         }
 
         async function saveAllToCloud(showAlert) {
@@ -149,29 +113,24 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(auftraege)
                 });
-                if (response.ok && showAlert) alert("Daten erfolgreich mit MongoDB synchronisiert!");
-            } catch (e) { console.error("Cloud-Sync fehlgeschlagen", e); }
+                if (response.ok && showAlert) alert("Synchronisiert!");
+            } catch (e) { console.error(e); }
         }
 
-        // NEU: Funktion für E-Mail Benachrichtigung
-        async function notifyTeam(newOrder) {
+        async function notifyTeam(type, order) {
             try {
                 await fetch('/api/send-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        type: 'Neuer Reparaturauftrag',
-                        details: newOrder
-                    })
+                    body: JSON.stringify({ type: type, details: order })
                 });
-            } catch (e) { console.error("Benachrichtigung fehlgeschlagen", e); }
+            } catch (e) { console.error(e); }
         }
 
         function switchTab(tab) {
             currentTab = tab;
-            document.getElementById('tab-active-btn').className = tab === 'active' ? 'pb-2 px-1 font-bold text-sm tab-active transition-all' : 'pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all';
-            document.getElementById('tab-archive-btn').className = tab === 'archive' ? 'pb-2 px-1 font-bold text-sm tab-active transition-all' : 'pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all';
-            document.getElementById('action-header').innerText = tab === 'active' ? 'Archivieren' : 'Aktionen';
+            document.getElementById('tab-active-btn').className = tab === 'active' ? 'pb-2 px-1 font-bold text-sm tab-active' : 'pb-2 px-1 font-bold text-sm text-slate-400';
+            document.getElementById('tab-archive-btn').className = tab === 'archive' ? 'pb-2 px-1 font-bold text-sm tab-active' : 'pb-2 px-1 font-bold text-sm text-slate-400';
             renderTable();
         }
 
@@ -182,11 +141,8 @@
             
             const filtered = auftraege.filter(o => {
                 const matchesTab = (currentTab === 'active' ? !o.archiv : o.archiv);
-                const matchesSearch = (o.text || "").toLowerCase().includes(query) || 
-                                     (o.standort || "").toLowerCase().includes(query) || 
-                                     (o.name || "").toLowerCase().includes(query) ||
-                                     (o.raum || "").toLowerCase().includes(query);
-                return matchesTab && matchesSearch;
+                const searchStr = `${o.text} ${o.standort} ${o.name} ${o.raum}`.toLowerCase();
+                return matchesTab && searchStr.includes(query);
             });
 
             filtered.forEach((o) => {
@@ -203,27 +159,24 @@
                         <p class="text-[10px] text-slate-400 mt-2 px-2 italic">${o.datum}</p>
                     </td>
                     <td class="px-4 py-4">
-                        <select onchange="updateData(${realIndex}, 'standort', this.value)" class="bg-transparent border-none text-sm font-semibold text-slate-700 dark:text-slate-200 w-full outline-none focus:bg-white dark:focus:bg-slate-700 rounded">
+                        <select onchange="updateData(${realIndex}, 'standort', this.value)" class="bg-transparent border-none text-sm font-semibold w-full outline-none">
                             ${['Rochusstr. 4','Rochusstr. 4b','Rochusstr. 4c','Rochusstr. 4d','Rochusstr. 6','Rochusstr. 12'].map(s => `<option ${o.standort===s?'selected':''}>${s}</option>`).join('')}
                         </select>
-                        <input onchange="updateData(${realIndex}, 'raum', this.value)" type="text" value="${o.raum || ''}" class="block w-full bg-transparent border-none text-xs text-slate-500 outline-none px-1 focus:bg-white dark:focus:bg-slate-700 mt-1 rounded">
+                        <input onchange="updateData(${realIndex}, 'raum', this.value)" type="text" value="${o.raum || ''}" class="block w-full bg-transparent border-none text-xs text-slate-500 outline-none mt-1">
                     </td>
                     <td class="px-4 py-4">
-                        <textarea onchange="updateData(${realIndex}, 'text', this.value)" class="bg-transparent border-none text-sm text-slate-600 dark:text-slate-300 w-full resize-none outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded" rows="2">${o.text || ''}</textarea>
+                        <textarea onchange="updateData(${realIndex}, 'text', this.value)" class="bg-transparent border-none text-sm w-full resize-none outline-none" rows="2">${o.text || ''}</textarea>
                     </td>
                     <td class="px-4 py-4">
-                        <input onchange="updateData(${realIndex}, 'name', this.value)" type="text" value="${o.name || ''}" class="bg-transparent border-none text-sm text-slate-500 w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded">
+                        <input onchange="updateData(${realIndex}, 'name', this.value)" type="text" value="${o.name || ''}" class="bg-transparent border-none text-sm text-slate-500 w-full outline-none">
                     </td>
                     <td class="px-4 py-4">
-                        <input onchange="updateData(${realIndex}, 'note', this.value)" type="text" value="${o.note || ''}" placeholder="..." class="bg-transparent border-none text-sm italic text-brand-500 w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded">
+                        <input onchange="updateData(${realIndex}, 'note', this.value)" type="text" value="${o.note || ''}" placeholder="..." class="bg-transparent border-none text-sm italic text-brand-500 w-full outline-none">
                     </td>
-                    <td class="px-4 py-4 text-right whitespace-nowrap">
+                    <td class="px-4 py-4 text-right">
                         ${currentTab === 'active' 
-                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="In Archiv verschieben">🗑️</button>`
-                            : `<div class="flex gap-2 justify-end">
-                                 <button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500 hover:scale-110 transition-all" title="Wiederherstellen">🔄</button>
-                                 <button onclick="deletePermanently(${realIndex})" class="p-2 text-red-400 hover:text-red-600 hover:scale-110 transition-all" title="Endgültig löschen">❌</button>
-                               </div>`
+                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500">🗑️</button>`
+                            : `<button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500">🔄</button>`
                         }
                     </td>
                 `;
@@ -231,35 +184,23 @@
             });
         }
 
-        function updateData(index, field, value) { 
+        async function updateData(index, field, value) { 
             auftraege[index][field] = value; 
-            saveAllToCloud(false); 
+            await saveAllToCloud(false); 
+            // Bei Statusänderung oder Textänderung eine Mail senden
+            await notifyTeam('Änderung', auftraege[index]);
             if(field === 'status') renderTable();
         }
 
-        function toggleArchiv(index, status) { 
+        async function toggleArchiv(index, status) { 
             auftraege[index].archiv = status; 
-            saveAllToCloud(false);
+            await saveAllToCloud(false);
             renderTable(); 
-        }
-
-        function deletePermanently(index) {
-            const order = auftraege[index];
-            const confirmMsg = `Möchten Sie den Auftrag "${order.text.substring(0,30)}..." wirklich unwiderruflich aus der MongoDB löschen?`;
-            
-            if (confirm(confirmMsg)) {
-                auftraege.splice(index, 1);
-                saveAllToCloud(false);
-                renderTable();
-            }
         }
 
         function toggleModal(s) { 
             document.getElementById('modal').classList.toggle('hidden', !s); 
-            if(s) {
-                document.getElementById('f-datum').valueAsDate = new Date();
-                document.getElementById('f-standort').focus();
-            }
+            if(s) document.getElementById('f-datum').valueAsDate = new Date();
         }
 
         document.getElementById('newOrderForm').onsubmit = async function(e) {
@@ -271,15 +212,12 @@
                 text: document.getElementById('f-text').value,
                 name: document.getElementById('f-name').value,
                 note: document.getElementById('f-note').value,
-                status: 'offen', 
-                archiv: false
+                status: 'offen', archiv: false
             };
             auftraege.unshift(newOrder);
             await saveAllToCloud(false);
-            await notifyTeam(newOrder); // Mail-Versand triggern
-            renderTable(); 
-            toggleModal(false); 
-            this.reset();
+            await notifyTeam('Neuanlage', newOrder);
+            renderTable(); toggleModal(false); this.reset();
         };
 
         window.onload = loadData;
