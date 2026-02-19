@@ -11,7 +11,7 @@ export default async function handler(req, res) {
         'zeus.petrikis@apleona.com',
         'sascha.wallner@apleona.com',
         'Jobcenter-Bonn.Team610-Organisation@jobcenter-ge.de',
-        'sven.garnefeld@jobcenter-ge.de'
+        'sven.garnefeld@gmail.com'
     ];
 
     // Betreff-Logik: [Typ] Liegenschaft | Raum
