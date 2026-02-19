@@ -18,7 +18,7 @@
         .status-pill.in_arbeit { background-color: #dbeafe; color: #1d4ed8; }
         .status-pill.erledigt { background-color: #d1fae5; color: #047857; }
         .tab-active { border-bottom: 3px solid #00a5d1; color: #00a5d1; }
-        input:focus, textarea:focus, select:focus { background-color: rgba(0, 165, 209, 0.05); }
+        input:focus, textarea:focus, select:focus { background-color: rgba(0, 165, 209, 0.05); outline: none; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
@@ -33,7 +33,7 @@
                 <div class="flex items-center gap-2">
                     <button onclick="saveAllToCloud(true)" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-md text-sm font-bold transition-all">💾 Cloud Sync</button>
                     <button onclick="toggleModal(true)" class="flex items-center gap-2 px-4 py-2 bg-brand-500 text-white rounded-lg hover:bg-brand-600 shadow-md text-sm font-bold">+ Neu</button>
-                    <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 ml-2 rounded-lg bg-slate-100 dark:bg-slate-700">🌓</button>
+                    <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 ml-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-lg">🌓</button>
                 </div>
             </div>
         </div>
@@ -42,26 +42,26 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div class="flex gap-6 border-b border-slate-200 dark:border-slate-700 w-full md:w-auto">
-                <button onclick="switchTab('active')" id="tab-active-btn" class="pb-2 px-1 font-bold text-sm tab-active">Aktive Aufträge</button>
-                <button onclick="switchTab('archive')" id="tab-archive-btn" class="pb-2 px-1 font-bold text-sm text-slate-400">Archiv</button>
+                <button onclick="switchTab('active')" id="tab-active-btn" class="pb-2 px-1 font-bold text-sm tab-active transition-all">Aktive Aufträge</button>
+                <button onclick="switchTab('archive')" id="tab-archive-btn" class="pb-2 px-1 font-bold text-sm text-slate-400 hover:text-brand-500 transition-all">Archiv</button>
             </div>
             <div class="relative w-full md:w-64">
-                <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Suche..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Suche..." class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none shadow-sm dark:border-slate-700">
                 <span class="absolute left-3 top-2.5 opacity-30">🔍</span>
             </div>
         </div>
 
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left border-collapse text-sm">
                     <thead>
-                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b text-[11px] font-bold text-slate-500 uppercase tracking-wider dark:border-slate-700">
                             <th class="px-6 py-4">Status / Datum</th>
                             <th class="px-6 py-4">Liegenschaft | Raum</th>
                             <th class="px-6 py-4">Sachverhalt</th>
                             <th class="px-6 py-4">Veranlasser (Team)</th>
                             <th class="px-6 py-4">Anmerkung</th>
-                            <th class="px-6 py-4 text-right" id="action-header">Archivieren</th>
+                            <th class="px-6 py-4 text-right" id="action-header">Aktion</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
@@ -71,26 +71,26 @@
     </main>
 
     <div id="modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border dark:border-slate-700">
             <div class="bg-brand-500 p-6 text-white flex justify-between items-center">
                 <h3 class="font-bold uppercase tracking-widest text-sm">Neuer Auftrag</h3>
-                <button onclick="toggleModal(false)" class="text-2xl">&times;</button>
+                <button onclick="toggleModal(false)" class="text-2xl leading-none">&times;</button>
             </div>
             <form id="newOrderForm" class="p-6 space-y-4">
                 <div class="grid grid-cols-2 gap-4">
-                    <select id="f-standort" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
+                    <select id="f-standort" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none dark:border-slate-700">
                         <option>Rochusstr. 4</option><option>Rochusstr. 4b</option><option>Rochusstr. 4c</option>
                         <option>Rochusstr. 4d</option><option selected>Rochusstr. 6</option><option>Rochusstr. 12</option>
                     </select>
-                    <input id="f-raum" type="text" placeholder="Raum-Nr." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
+                    <input id="f-raum" type="text" placeholder="Raum-Nr." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none dark:border-slate-700">
                 </div>
-                <textarea id="f-text" rows="2" required placeholder="Sachverhalt..." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none resize-none"></textarea>
-                <input id="f-note" type="text" placeholder="Anmerkung..." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
+                <textarea id="f-text" rows="2" required placeholder="Sachverhalt..." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none resize-none dark:border-slate-700"></textarea>
+                <input id="f-note" type="text" placeholder="Anmerkung..." class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none dark:border-slate-700">
                 <div class="grid grid-cols-2 gap-4">
-                    <input id="f-name" type="text" required placeholder="Veranlasser Team" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
-                    <input id="f-datum" type="date" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none">
+                    <input id="f-name" type="text" required placeholder="Veranlasser Team" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none dark:border-slate-700">
+                    <input id="f-datum" type="date" class="w-full bg-slate-50 dark:bg-slate-900 border rounded-lg p-2.5 text-sm outline-none dark:border-slate-700">
                 </div>
-                <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-lg font-bold shadow-lg mt-4">Auftrag speichern</button>
+                <button type="submit" class="w-full bg-brand-500 text-white py-3 rounded-lg font-bold shadow-lg mt-4 hover:bg-brand-600 transition-all">Auftrag speichern</button>
             </form>
         </div>
     </div>
@@ -124,7 +124,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: type, details: order })
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Mail-Versand fehlgeschlagen", e); }
         }
 
         function switchTab(tab) {
@@ -150,33 +150,36 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors";
                 tr.innerHTML = `
-                    <td class="px-4 py-4">
+                    <td class="px-6 py-4">
                         <select onchange="updateData(${realIndex}, 'status', this.value)" class="status-pill ${o.status}">
                             <option value="offen" ${o.status==='offen'?'selected':''}>Offen</option>
                             <option value="in_arbeit" ${o.status==='in_arbeit'?'selected':''}>In Arbeit</option>
                             <option value="erledigt" ${o.status==='erledigt'?'selected':''}>Erledigt</option>
                         </select>
-                        <p class="text-[10px] text-slate-400 mt-2 px-2 italic">${o.datum}</p>
+                        <p class="text-[10px] text-slate-400 mt-2 px-1 italic">${o.datum}</p>
                     </td>
-                    <td class="px-4 py-4">
-                        <select onchange="updateData(${realIndex}, 'standort', this.value)" class="bg-transparent border-none text-sm font-semibold w-full outline-none">
+                    <td class="px-6 py-4">
+                        <select onchange="updateData(${realIndex}, 'standort', this.value)" class="bg-transparent border-none text-sm font-semibold w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded">
                             ${['Rochusstr. 4','Rochusstr. 4b','Rochusstr. 4c','Rochusstr. 4d','Rochusstr. 6','Rochusstr. 12'].map(s => `<option ${o.standort===s?'selected':''}>${s}</option>`).join('')}
                         </select>
-                        <input onchange="updateData(${realIndex}, 'raum', this.value)" type="text" value="${o.raum || ''}" class="block w-full bg-transparent border-none text-xs text-slate-500 outline-none mt-1">
+                        <input onchange="updateData(${realIndex}, 'raum', this.value)" type="text" value="${o.raum || ''}" class="block w-full bg-transparent border-none text-xs text-slate-500 outline-none mt-1 focus:bg-white dark:focus:bg-slate-700 px-1 rounded">
                     </td>
-                    <td class="px-4 py-4">
-                        <textarea onchange="updateData(${realIndex}, 'text', this.value)" class="bg-transparent border-none text-sm w-full resize-none outline-none" rows="2">${o.text || ''}</textarea>
+                    <td class="px-6 py-4">
+                        <textarea onchange="updateData(${realIndex}, 'text', this.value)" class="bg-transparent border-none text-sm w-full resize-none outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded" rows="2">${o.text || ''}</textarea>
                     </td>
-                    <td class="px-4 py-4">
-                        <input onchange="updateData(${realIndex}, 'name', this.value)" type="text" value="${o.name || ''}" class="bg-transparent border-none text-sm text-slate-500 w-full outline-none">
+                    <td class="px-6 py-4">
+                        <input onchange="updateData(${realIndex}, 'name', this.value)" type="text" value="${o.name || ''}" class="bg-transparent border-none text-sm text-slate-500 w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded">
                     </td>
-                    <td class="px-4 py-4">
-                        <input onchange="updateData(${realIndex}, 'note', this.value)" type="text" value="${o.note || ''}" placeholder="..." class="bg-transparent border-none text-sm italic text-brand-500 w-full outline-none">
+                    <td class="px-6 py-4">
+                        <input onchange="updateData(${realIndex}, 'note', this.value)" type="text" value="${o.note || ''}" placeholder="..." class="bg-transparent border-none text-sm italic text-brand-500 w-full outline-none focus:bg-white dark:focus:bg-slate-700 px-1 rounded">
                     </td>
-                    <td class="px-4 py-4 text-right">
+                    <td class="px-6 py-4 text-right whitespace-nowrap">
                         ${currentTab === 'active' 
-                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500">🗑️</button>`
-                            : `<button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500">🔄</button>`
+                            ? `<button onclick="toggleArchiv(${realIndex}, true)" class="p-2 text-slate-300 hover:text-red-500 transition-colors" title="Archivieren">🗑️</button>`
+                            : `<div class="flex gap-3 justify-end">
+                                 <button onclick="toggleArchiv(${realIndex}, false)" class="p-2 text-brand-500 hover:scale-110 transition-all" title="Wiederherstellen">🔄</button>
+                                 <button onclick="deletePermanently(${realIndex})" class="p-2 text-red-400 hover:text-red-600 hover:scale-110 transition-all" title="Endgültig löschen">❌</button>
+                               </div>`
                         }
                     </td>
                 `;
@@ -187,7 +190,6 @@
         async function updateData(index, field, value) { 
             auftraege[index][field] = value; 
             await saveAllToCloud(false); 
-            // Bei Statusänderung oder Textänderung eine Mail senden
             await notifyTeam('Änderung', auftraege[index]);
             if(field === 'status') renderTable();
         }
@@ -196,6 +198,15 @@
             auftraege[index].archiv = status; 
             await saveAllToCloud(false);
             renderTable(); 
+        }
+
+        async function deletePermanently(index) {
+            const order = auftraege[index];
+            if (confirm(`Auftrag "${order.text.substring(0,30)}..." wirklich endgültig löschen?`)) {
+                auftraege.splice(index, 1);
+                await saveAllToCloud(false);
+                renderTable();
+            }
         }
 
         function toggleModal(s) { 
