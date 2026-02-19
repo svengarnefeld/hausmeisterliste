@@ -111,7 +111,7 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-slate-400 uppercase">Anmerkung (Optional)</label>
-                    <input id="f-note" type="text" placeholder="Zusatzinfos für Team 610..." class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
+                    <input id="f-note" type="text" placeholder="Zusatzinfos..." class="w-full mt-1 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -151,6 +151,20 @@
                 });
                 if (response.ok && showAlert) alert("Daten erfolgreich mit MongoDB synchronisiert!");
             } catch (e) { console.error("Cloud-Sync fehlgeschlagen", e); }
+        }
+
+        // NEU: Funktion für E-Mail Benachrichtigung
+        async function notifyTeam(newOrder) {
+            try {
+                await fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'Neuer Reparaturauftrag',
+                        details: newOrder
+                    })
+                });
+            } catch (e) { console.error("Benachrichtigung fehlgeschlagen", e); }
         }
 
         function switchTab(tab) {
@@ -262,6 +276,7 @@
             };
             auftraege.unshift(newOrder);
             await saveAllToCloud(false);
+            await notifyTeam(newOrder); // Mail-Versand triggern
             renderTable(); 
             toggleModal(false); 
             this.reset();
@@ -271,4 +286,3 @@
     </script>
 </body>
 </html>
-
