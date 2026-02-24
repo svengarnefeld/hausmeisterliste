@@ -5,12 +5,6 @@ export default async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
     const { type, details } = req.body;
-    
-    // Deine gewünschten Empfänger
-    const recipients = [
-        'jcbonn.organisation@gmx.de'
-
-    ];
 
     // Betreff-Logik: [Typ] Liegenschaft | Raum
     const subject = `[${type}] ${details.standort} | ${details.raum || 'Kein Raum'}`;
@@ -18,7 +12,7 @@ export default async function handler(req, res) {
     try {
         await resend.emails.send({
             from: 'Jobcenter-Bonn <onboarding@resend.dev>', // Sobald Domain verifiziert, hier anpassen
-            to: recipients,
+            to: 'jcbonn.organisation@gmx.de'
             subject: subject,
             html: `
                 <div style="font-family: sans-serif; color: #333;">
