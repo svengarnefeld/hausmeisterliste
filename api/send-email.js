@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     try {
         await resend.emails.send({
             from: 'Jobcenter-Bonn <onboarding@resend.dev>', // Sobald Domain verifiziert, hier anpassen
-            to: 'jcbonn.organisation@gmx.de'
+            to: 'jcbonn.organisation@gmx.de',
             subject: subject,
             html: `
                 <div style="font-family: sans-serif; color: #333;">
